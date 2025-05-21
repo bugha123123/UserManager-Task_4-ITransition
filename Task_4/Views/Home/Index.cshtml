@@ -1,6 +1,9 @@
 ﻿@using Task_4.Interface
 @{
     ViewData["Title"] = "Home Page";
+    string searchQuery = Context.Request.Query["query"];
+    var AllUsers = await userService.GetAllUsers(searchQuery);
+                        
 }
 @inject IUserService userService;
 
@@ -36,18 +39,25 @@
                     </button>
                 </div>
             </div>
-
-            <div class="mt-4 md:mt-0 flex space-x-3">
+            <form method="get" class="flex space-x-3 md:mt-0">
                 <div class="relative">
-                    <input type="text" placeholder="Search users..." id="search-input"
+                    <input type="text"
+                           name="query"
+                           value="@searchQuery"
+                           placeholder="Search users..."
                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-apple-blue focus:border-apple-blue transition duration-150 outline-none w-full md:w-64" />
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <!-- search icon -->
                         <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                         </svg>
                     </div>
                 </div>
-            </div>
+                <button type="submit"
+                        class="border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
+                    Search
+                </button>
+            </form>
         </div>
 
         <!-- Table -->
@@ -105,44 +115,53 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white" id="user-table-body">
-                        @{
-                            var AllUsers = await userService.GetAllUsers();
-                        }
-                        @foreach (var user in AllUsers)
+                        @if (AllUsers == null || !AllUsers.Any())
                         {
                             <tr>
-                                <td class="py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                    <input type="checkbox" class="user-checkbox h-4 w-4 rounded border-gray-300 text-apple-blue focus:ring-apple-blue cursor-pointer" />
-                                </td>
-                                <td class="py-4 px-3 text-sm text-gray-900">@user.UserName.Substring(0, 6)</td>
-                                <td class="py-4 px-3 text-sm text-gray-900">@user.Email</td>
-
-                                <td class="py-4 px-3 text-sm text-gray-900 relative group">
-                                    <span class="cursor-default">
-                                        @(user.LastSeen != null ? TimeAgoHelper.TimeAgo(user.LastSeen.Value) : "Never")
-                                    </span>
-                                    @if (user.LastSeen != null)
-                                    {
-                                        <div class="absolute z-5 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full mb-1 left-0 whitespace-nowrap">
-                                            @user.LastSeen?.ToLocalTime().ToString("f")
-                                        </div>
-                                    }
-                                </td>
-
-                                <td class="py-4 px-3 text-sm text-gray-900">@user.RegisteredAt.ToString("d")</td>
-                                <td class="py-4 px-3 text-sm text-gray-900">
-                                    @if (user.Status == UserStatus.ACTIVE)
-                                    {
-                                        <span class="text-green-600 font-semibold">Active</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-red-600 font-semibold">@user.Status</span>
-                                    }
+                                <td colspan="6" class="py-6 text-center text-gray-500">
+                                    No users found.
                                 </td>
                             </tr>
                         }
+                        else
+                        {
+                            @foreach (var user in AllUsers)
+                            {
+                                <tr>
+                                    <td class="py-4 pl-4 pr-3 text-sm sm:pl-6">
+                                        <input type="checkbox" class="user-checkbox h-4 w-4 rounded border-gray-300 text-apple-blue focus:ring-apple-blue cursor-pointer" />
+                                    </td>
+                                    <td class="py-4 px-3 text-sm text-gray-900">@user.UserName.Substring(0, 6)</td>
+                                    <td class="py-4 px-3 text-sm text-gray-900">@user.Email</td>
+
+                                    <td class="py-4 px-3 text-sm text-gray-900 relative group">
+                                        <span class="cursor-default">
+                                            @(user.LastSeen != null ? TimeAgoHelper.TimeAgo(user.LastSeen.Value) : "Never")
+                                        </span>
+                                        @if (user.LastSeen != null)
+                                        {
+                                            <div class="absolute z-5 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full mb-1 left-0 whitespace-nowrap">
+                                                @user.LastSeen?.ToLocalTime().ToString("f")
+                                            </div>
+                                        }
+                                    </td>
+
+                                    <td class="py-4 px-3 text-sm text-gray-900">@user.RegisteredAt.ToString("d")</td>
+                                    <td class="py-4 px-3 text-sm text-gray-900">
+                                        @if (user.Status == UserStatus.ACTIVE)
+                                        {
+                                            <span class="text-green-600 font-semibold">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-red-600 font-semibold">@user.Status</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
                     </tbody>
+
                 </table>
             </div>
         </div>

@@ -4,6 +4,6 @@ namespace Task_4.Interface
 {
     public interface IUserService
     {
-        Task<List<User>> GetAllUsers(); 
+        Task<List<User>> GetAllUsers(string? query); 
     }
 }
