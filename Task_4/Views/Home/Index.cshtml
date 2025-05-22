@@ -1,5 +1,4 @@
 ﻿@using Task_4.Interface
-
 @inject IUserService userService
 @{
     ViewData["Title"] = "Home Page";
@@ -10,17 +9,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Management Table</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-           
             <form method="get" class="flex space-x-3 md:mt-0">
                 <div class="relative">
                     <input type="text" name="query" value="@searchQuery" placeholder="Search users..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full md:w-64" />
@@ -34,32 +29,25 @@
             </form>
         </div>
 
-        <!-- Table -->
         <form asp-action="BulkDelete" asp-controller="Home" method="post">
             <div class="mt-4 flex space-x-2 mb-4">
-                <!-- Block button -->
                 <button type="submit" name="action" value="block"
                         class="flex items-center space-x-1 border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
-                    <span class="material-icons text-blue-500">block</span>
+                    <span class="text-blue-500">🚫</span>
                     <span>Block</span>
                 </button>
 
-                <!-- Unblock button -->
                 <button type="submit" name="action" value="activate"
                         class="flex items-center space-x-1 border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
-                    <span class="material-icons text-blue-500">lock_open</span>
-                    <span>Unblock</span>
+                    <span class="text-blue-500">🔓</span>
                 </button>
 
-                <!-- Delete button -->
                 <button type="submit" name="action" value="delete"
                         class="flex items-center space-x-1 border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-100">
-                    <span class="material-icons text-red-500">delete</span>
-                    <span>Delete</span>
+                    <span class="text-red-500">🗑️</span>
                 </button>
             </div>
 
-            <!-- Table START -->
             <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-300">
@@ -91,8 +79,7 @@
                                 {
                                     <tr>
                                         <td class="py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                            <input type="checkbox" name="SelectedUserIds"
-                                                   value="@user.Id"
+                                            <input type="checkbox" name="SelectedUserIds" value="@user.Id"
                                                    class="user-checkbox h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500 cursor-pointer" />
                                         </td>
                                         <td class="py-4 px-3 text-sm text-gray-900">@user.UserName?.Substring(0, Math.Min(user.UserName.Length, 6))</td>
@@ -126,28 +113,47 @@
                     </table>
                 </div>
             </div>
-            <!-- Table END -->
         </form>
-
     </div>
+
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const selectAll = document.getElementById('select-all');
             const checkboxes = document.querySelectorAll('.user-checkbox');
-            const hiddenInput = document.getElementById('selected-ids');
 
             selectAll.addEventListener('change', () => {
                 checkboxes.forEach(cb => cb.checked = selectAll.checked);
-                updateSelectedIds();
             });
+        });
 
-            checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedIds));
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `max-w-xs w-full p-4 rounded shadow text-white text-sm font-medium ${
+                type === "success" ? "bg-green-600" :
+                type === "error" ? "bg-red-600" :
+                "bg-gray-800"
+            }`;
 
-            function updateSelectedIds() {
-                const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-                hiddenInput.value = selected.join(',');
-                selectAll.checked = selected.length === checkboxes.length;
+            toast.textContent = message;
+
+            const container = document.getElementById("toast-container");
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "transition", "duration-500");
+            }, 3000);
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const message = '@(TempData["ToastMessage"]?.ToString().Replace("'", "\\'"))';
+            const type = '@TempData["ToastType"]' || "success";
+            if (message) {
+                showToast(message, type);
             }
         });
     </script>

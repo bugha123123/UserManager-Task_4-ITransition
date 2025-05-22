@@ -7,9 +7,11 @@ namespace Task_4.Service
     public class UserService : IUserService
     {
         private readonly DbContextion _dbcontext;
-public UserService(DbContextion dbcontext)
+        private readonly IAuthService _authService;
+        public UserService(DbContextion dbcontext, IAuthService authService)
         {
             _dbcontext = dbcontext;
+            _authService = authService;
         }
 
         public async Task ActivateUser(string[] SelectedUserIds)
@@ -18,10 +20,16 @@ public UserService(DbContextion dbcontext)
                 return;
 
             var users = _dbcontext.Users.Where(x => SelectedUserIds.Contains(x.Id));
+            
+
+           
 
             foreach (var user in users)
             {
-                user.Status = UserStatus.ACTIVE;
+                if (user.Status == UserStatus.BLOCKED)
+                {
+                    user.Status = UserStatus.ACTIVE;
+                }
             }
 
             await _dbcontext.SaveChangesAsync();

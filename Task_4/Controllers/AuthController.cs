@@ -36,6 +36,7 @@ namespace Task_4.Controllers
                 return RedirectToAction("Index", "Home"); 
             }
 
+            TempData["BlockUserError"] = "Your account has been blocked. Please contact support for assistance.";
             ModelState.AddModelError(string.Empty, "Invalid email or password.");
             return View(dto);
         }
@@ -61,6 +62,7 @@ namespace Task_4.Controllers
                 TempData["SuccessMessage"] = "Account created successfully! Please sign in.";
                 return RedirectToAction("signin", "Auth");
             }
+            
 
             // Show specific errors from Identity or DB
             ModelState.AddModelError(string.Empty, error ?? "Registration failed.");
