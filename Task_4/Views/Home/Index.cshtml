@@ -1,18 +1,18 @@
 ﻿@using Task_4.Interface
+
+@inject IUserService userService
 @{
     ViewData["Title"] = "Home Page";
     string searchQuery = Context.Request.Query["query"];
     var AllUsers = await userService.GetAllUsers(searchQuery);
-                        
 }
-@inject IUserService userService;
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Management Table with Tailwind CSS</title>
+    <title>User Management Table</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
@@ -20,176 +20,135 @@
 <body class="bg-gray-50 text-gray-900 antialiased">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <div>
-                <div class="mt-4 flex space-x-2">
-                    <!-- Block button -->
-                    <button class="flex items-center space-x-1 border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
-                        <span class="material-icons text-blue-500">block</span>
-                        <span>Block</span>
-                    </button>
-
-                    <!-- Unblock button -->
-                    <button class="flex items-center space-x-1 border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
-                        <span class="material-icons text-blue-500">lock_open</span>
-                    </button>
-
-                    <!-- Delete button -->
-                    <button class="flex items-center space-x-1 border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-100">
-                        <span class="material-icons text-red-500">delete</span>
-                    </button>
-                </div>
-            </div>
+           
             <form method="get" class="flex space-x-3 md:mt-0">
                 <div class="relative">
-                    <input type="text"
-                           name="query"
-                           value="@searchQuery"
-                           placeholder="Search users..."
-                           class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-apple-blue focus:border-apple-blue transition duration-150 outline-none w-full md:w-64" />
+                    <input type="text" name="query" value="@searchQuery" placeholder="Search users..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full md:w-64" />
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <!-- search icon -->
                         <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                         </svg>
                     </div>
                 </div>
-                <button type="submit"
-                        class="border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
-                    Search
-                </button>
+                <button type="submit" class="border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">Search</button>
             </form>
         </div>
 
         <!-- Table -->
-        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-300">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="select-all"
-                                           class="h-4 w-4 rounded border-gray-300 text-apple-blue focus:ring-apple-blue cursor-pointer" />
-                                </div>
-                            </th>
-                            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 cursor-pointer hover:text-apple-blue transition duration-150">
-                                <div class="flex items-center group">
-                                    Name
-                                    <svg class="ml-1 h-4 w-4 opacity-0 group-hover:opacity-100 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 cursor-pointer hover:text-apple-blue transition duration-150">
-                                <div class="flex items-center group">
-                                    Email
-                                    <svg class="ml-1 h-4 w-4 opacity-0 group-hover:opacity-100 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 cursor-pointer hover:text-apple-blue transition duration-150">
-                                <div class="flex items-center group">
-                                    Last Seen
-                                    <svg class="ml-1 h-4 w-4 opacity-0 group-hover:opacity-100 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 cursor-pointer hover:text-apple-blue transition duration-150">
-                                <div class="flex items-center group">
-                                    Registered
-                                    <svg class="ml-1 h-4 w-4 opacity-0 group-hover:opacity-100 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-                                    </svg>
-                                </div>
-                            </th>
-                            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900 cursor-pointer hover:text-apple-blue transition duration-150">
-                                <div class="flex items-center group">
-                                    Status
-                                    <svg class="ml-1 h-4 w-4 opacity-0 group-hover:opacity-100 transition duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-                                    </svg>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white" id="user-table-body">
-                        @if (AllUsers == null || !AllUsers.Any())
-                        {
+        <form asp-action="BulkDelete" asp-controller="Home" method="post">
+            <div class="mt-4 flex space-x-2 mb-4">
+                <!-- Block button -->
+                <button type="submit" name="action" value="block"
+                        class="flex items-center space-x-1 border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
+                    <span class="material-icons text-blue-500">block</span>
+                    <span>Block</span>
+                </button>
+
+                <!-- Unblock button -->
+                <button type="submit" name="action" value="activate"
+                        class="flex items-center space-x-1 border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-100">
+                    <span class="material-icons text-blue-500">lock_open</span>
+                    <span>Unblock</span>
+                </button>
+
+                <!-- Delete button -->
+                <button type="submit" name="action" value="delete"
+                        class="flex items-center space-x-1 border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-100">
+                    <span class="material-icons text-red-500">delete</span>
+                    <span>Delete</span>
+                </button>
+            </div>
+
+            <!-- Table START -->
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <td colspan="6" class="py-6 text-center text-gray-500">
-                                    No users found.
-                                </td>
+                                <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                    <input type="checkbox" id="select-all"
+                                           class="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500 cursor-pointer" />
+                                </th>
+                                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Email</th>
+                                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Last Seen</th>
+                                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Registered</th>
+                                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Status</th>
                             </tr>
-                        }
-                        else
-                        {
-                            @foreach (var user in AllUsers)
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white" id="user-table-body">
+                            @if (AllUsers == null || !AllUsers.Any())
                             {
                                 <tr>
-                                    <td class="py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                        <input type="checkbox" class="user-checkbox h-4 w-4 rounded border-gray-300 text-apple-blue focus:ring-apple-blue cursor-pointer" />
-                                    </td>
-                                    <td class="py-4 px-3 text-sm text-gray-900">@user.UserName.Substring(0, 6)</td>
-                                    <td class="py-4 px-3 text-sm text-gray-900">@user.Email</td>
-
-                                    <td class="py-4 px-3 text-sm text-gray-900 relative group">
-                                        <span class="cursor-default">
-                                            @(user.LastSeen != null ? TimeAgoHelper.TimeAgo(user.LastSeen.Value) : "Never")
-                                        </span>
-                                        @if (user.LastSeen != null)
-                                        {
-                                            <div class="absolute z-5 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full mb-1 left-0 whitespace-nowrap">
-                                                @user.LastSeen?.ToLocalTime().ToString("f")
-                                            </div>
-                                        }
-                                    </td>
-
-                                    <td class="py-4 px-3 text-sm text-gray-900">@user.RegisteredAt.ToString("d")</td>
-                                    <td class="py-4 px-3 text-sm text-gray-900">
-                                        @if (user.Status == UserStatus.ACTIVE)
-                                        {
-                                            <span class="text-green-600 font-semibold">Active</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-red-600 font-semibold">@user.Status</span>
-                                        }
+                                    <td colspan="6" class="py-6 text-center text-gray-500">
+                                        No users found.
                                     </td>
                                 </tr>
                             }
-                        }
-                    </tbody>
-
-                </table>
+                            else
+                            {
+                                @foreach (var user in AllUsers)
+                                {
+                                    <tr>
+                                        <td class="py-4 pl-4 pr-3 text-sm sm:pl-6">
+                                            <input type="checkbox" name="SelectedUserIds"
+                                                   value="@user.Id"
+                                                   class="user-checkbox h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500 cursor-pointer" />
+                                        </td>
+                                        <td class="py-4 px-3 text-sm text-gray-900">@user.UserName?.Substring(0, Math.Min(user.UserName.Length, 6))</td>
+                                        <td class="py-4 px-3 text-sm text-gray-900">@user.Email</td>
+                                        <td class="py-4 px-3 text-sm text-gray-900 relative group">
+                                            <span class="cursor-default">
+                                                @(user.LastSeen != null ? TimeAgoHelper.TimeAgo(user.LastSeen.Value) : "Never")
+                                            </span>
+                                            @if (user.LastSeen != null)
+                                            {
+                                                <div class="absolute z-10 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full mb-1 left-0 whitespace-nowrap">
+                                                    @user.LastSeen?.ToLocalTime().ToString("f")
+                                                </div>
+                                            }
+                                        </td>
+                                        <td class="py-4 px-3 text-sm text-gray-900">@user.RegisteredAt.ToString("d")</td>
+                                        <td class="py-4 px-3 text-sm text-gray-900">
+                                            @if (user.Status == UserStatus.ACTIVE)
+                                            {
+                                                <span class="text-green-600 font-semibold">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-red-600 font-semibold">@user.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+            <!-- Table END -->
+        </form>
+
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const selectAllCheckbox = document.getElementById('select-all');
-            const userCheckboxes = document.querySelectorAll('.user-checkbox');
+            const selectAll = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            const hiddenInput = document.getElementById('selected-ids');
 
-            // When "select all" checkbox changes
-            selectAllCheckbox.addEventListener('change', function () {
-                userCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAllCheckbox.checked;
-                });
+            selectAll.addEventListener('change', () => {
+                checkboxes.forEach(cb => cb.checked = selectAll.checked);
+                updateSelectedIds();
             });
 
-            // When any individual checkbox changes
-            userCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    if (!this.checked) {
-                        selectAllCheckbox.checked = false;
-                    } else {
-                        const allChecked = Array.from(userCheckboxes).every(cb => cb.checked);
-                        selectAllCheckbox.checked = allChecked;
-                    }
-                });
-            });
+            checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedIds));
+
+            function updateSelectedIds() {
+                const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                hiddenInput.value = selected.join(',');
+                selectAll.checked = selected.length === checkboxes.length;
+            }
         });
     </script>
 </body>
