@@ -85,14 +85,15 @@ namespace Task_4.Service
             }
         }
 
-        public async Task<bool> LoginAsync(signinDTO dto)
+        public async Task<LoginResult> LoginAsync(signinDTO dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
 
-            if (user == null || user.Status == UserStatus.BLOCKED)
-            {
-                return false;
-            }
+            if (user == null)
+                return LoginResult.UserNotFound;
+
+            if (user.Status == UserStatus.BLOCKED)
+                return LoginResult.UserBlocked;
 
             var result = await _signInManager.PasswordSignInAsync(user, dto.Password, isPersistent: false, lockoutOnFailure: false);
 
@@ -100,11 +101,12 @@ namespace Task_4.Service
             {
                 user.LastSeen = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
-                return true;
+                return LoginResult.Success;
             }
 
-            return false;
+            return LoginResult.WrongPassword;
         }
+
 
         public async Task LogoutAsync()
         {

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Task_4.DTO;
 using Task_4.DTO;
 using Task_4.Interface;
+using Task_4.Models;
 
 namespace Task_4.Controllers
 {
@@ -30,16 +31,26 @@ namespace Task_4.Controllers
                 return View(dto);
             }
 
-            var success = await _authService.LoginAsync(dto);
-            if (success)
+            var loginResult = await _authService.LoginAsync(dto);
+
+            switch (loginResult)
             {
-                return RedirectToAction("Index", "Home"); 
+                case LoginResult.Success:
+                    return RedirectToAction("Index", "Home");
+
+                case LoginResult.UserBlocked:
+                    TempData["BlockUserError"] = "Your account has been blocked. Please contact support for assistance.";
+                    break;
+
+                case LoginResult.WrongPassword:
+                case LoginResult.UserNotFound:
+                    ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                    break;
             }
 
-            TempData["BlockUserError"] = "Your account has been blocked. Please contact support for assistance.";
-            ModelState.AddModelError(string.Empty, "Invalid email or password.");
             return View(dto);
         }
+
 
         [HttpGet]
         public IActionResult signup()

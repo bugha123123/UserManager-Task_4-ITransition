@@ -9,6 +9,14 @@ namespace Task_4.Models
         ACTIVE,
         BLOCKED
     }
+    public enum LoginResult
+    {
+        Success,
+        UserNotFound,
+        UserBlocked,
+        WrongPassword,
+        Failed
+    }
 
     public class User : IdentityUser
     {
