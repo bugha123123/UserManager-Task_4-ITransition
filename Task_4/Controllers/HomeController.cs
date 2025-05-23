@@ -32,7 +32,7 @@ public class HomeController : Controller
         {
             
 
-            return RedirectToAction("signout", "Auth");
+            return RedirectToAction("signin", "Auth");
         }
         switch (action)
         {

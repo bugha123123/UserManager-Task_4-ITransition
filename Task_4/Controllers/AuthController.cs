@@ -70,6 +70,7 @@ namespace Task_4.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> signout()
         {
             await _authService.LogoutAsync();
